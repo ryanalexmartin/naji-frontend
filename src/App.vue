@@ -1,18 +1,33 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div id="app">
+    <OmegleHome v-if="!state.showChat" @start-chat="state.showChat = true" />
+    <OmegleChat v-if="state.showChat" />
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import { reactive } from "vue";
+import OmegleHome from "./components/OmegleHome.vue";
+import OmegleChat from "./components/OmegleChat.vue";
 
 export default {
-  name: 'App',
   components: {
-    HelloWorld
-  }
-}
+    OmegleHome,
+    OmegleChat,
+  },
+
+  setup() {
+    const state = reactive({
+      showChat: false,
+    });
+
+    return {
+      state,
+    };
+  },
+};
 </script>
+
 
 <style>
 #app {
