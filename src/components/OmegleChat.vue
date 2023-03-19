@@ -32,6 +32,17 @@ export default {
     const searchButtonVisible = ref(false);
 
     onMounted(() => {
+      initializeWebSocket();
+    });
+
+    onUnmounted(() => {
+      if (websocket.value) {
+        websocket.value.send(JSON.stringify({ type: "disconnect" }));
+        websocket.value.close();
+      }
+    });
+
+    function initializeWebSocket() {
       websocket.value = new WebSocket("ws://localhost:8080/ws");
       websocket.value.onmessage = (event) => {
         const messageData = JSON.parse(event.data);
@@ -50,14 +61,7 @@ export default {
           messages.value.push("Stranger: " + messageData.text);
         }
       };
-    });
-
-    onUnmounted(() => {
-      if (websocket.value) {
-        websocket.value.send(JSON.stringify({ type: "disconnect" }));
-        websocket.value.close();
-      }
-    });
+    }
 
     function sendMessage() {
       if (inputMessage.value.trim() !== "") {
