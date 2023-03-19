@@ -77,9 +77,10 @@ export default {
     }
 
     function searchForAnotherChat() {
+      messages.value = [];
       searchButtonVisible.value = false;
       showChatWindow.value = false;
-      websocket.value.send(JSON.stringify({ type: "search_again" }));
+      initializeWebSocket();
     }
 
     return {
