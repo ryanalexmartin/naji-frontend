@@ -6,7 +6,28 @@
     </div>
     <div v-if="showChatWindow" class="chat-window">
       <ul>
-        <li v-for="(message, index) in messages" :key="index">{{ message }}</li>
+        <li v-for="(message, index) in messages" :key="index" :set="message = JSON.parse(message)">
+          <div v-if="message.sender === 'system'">
+
+            <!-- Horizontal Flexbox defined below -->
+            <div v-if="message.sender === 'system'">
+              <div> {{ message.message }} </div>
+            </div>
+
+            <div v-if="message.sender === 'Stranger'" class="client-message">
+              {{ message.message }}
+            </div>
+            <div v-if="message.sender === 'You'" class="server-message">
+              {{ message.message }}
+            </div>
+          </div>
+          <div v-if="message.sender === 'Stranger'" class="client-message">
+            {{ message.message }}
+          </div>
+          <div v-if="message.sender === 'You'" class="server-message">
+            {{ message.message }}
+          </div>
+        </li>
       </ul>
     </div>
     <div v-if="connected" class="input-group">
@@ -48,17 +69,17 @@ export default {
         const messageData = JSON.parse(event.data);
 
         if (messageData.type === "status") {
-          messages.value.push(messageData.text);
+          messages.value.push(JSON.stringify({ "sender": "system", "message": messageData.text }));
           if (messageData.text === "You are now connected with another user.") {
             connected.value = true;
             showChatWindow.value = true;
-            searchButtonVisible.value = false; // Add this line
+            searchButtonVisible.value = false;
           } else if (messageData.text === "The other user has disconnected.") {
             connected.value = false;
             searchButtonVisible.value = true;
           }
         } else if (connected.value) {
-          messages.value.push("Stranger: " + messageData.text);
+          messages.value.push(JSON.stringify({ "sender": "Stranger", "message": messageData.text }));
         }
       };
     }
@@ -72,7 +93,7 @@ export default {
 
         websocket.value.send(JSON.stringify(messageData));
         inputMessage.value = "";
-        messages.value.push("You: " + messageData.text);
+        messages.value.push(JSON.stringify({ "sender": "You", "message": messageData.text }));
       }
     }
 
@@ -96,11 +117,10 @@ export default {
 };
 </script>
 
-
 <style>
 .client-message {
   background-color: #eee;
-  margin-right: 50%;
+  margin-right: 20%;
   padding: 5px;
   border-radius: 5px;
 }
@@ -108,9 +128,26 @@ export default {
 .server-message {
   background-color: #2196f3;
   color: #fff;
-  margin-left: 50%;
+  margin-left: 20%;
   padding: 5px;
   border-radius: 5px;
+}
+
+.horizontal-flexbox {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.system-message {
+  background-color: #eee;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+li {
+  /* styles all li elements*/
+  list-style-type: none;
 }
 
 input[type="text"] {
