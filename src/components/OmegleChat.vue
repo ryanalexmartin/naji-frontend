@@ -54,7 +54,6 @@ export default {
     const showChatWindow = ref(false);
     const searchButtonVisible = ref(false);
     const endChatText = ref("End Chat");
-    const confirmEndChat = ref(false);
 
     onMounted(() => {
       initializeWebSocket();
@@ -89,13 +88,17 @@ export default {
     }
 
     function endChat() {
-  if (!confirmEndChat.value) {
-    confirmEndChat.value = true;
+  if (endChatText.value === "End Chat") {
     endChatText.value = "Are you sure you want to end this chat?";
-  } else {
-    confirmEndChat.value = false;
+  } else if (endChatText.value === "Are you sure you want to end this chat?") {
+    // Handle ending the chat
+    messages.value.push(JSON.stringify({ "sender": "system", "message": "You have ended the chat." }));
+    connected.value = false;
+    endChatText.value = "New Chat";
+  } else if (endChatText.value === "New Chat") {
+    // Handle starting a new chat
+    searchForAnotherChat();
     endChatText.value = "End Chat";
-    // Add logic to end the chat and change the button to "New Chat"
   }
 }
 
@@ -128,6 +131,7 @@ export default {
       searchForAnotherChat,
       showChatWindow,
       endChat,
+      endChatText,
     };
   },
 };
@@ -143,10 +147,10 @@ body {
   background-color: #7199a0;
   color: white;
   border: none;
-  padding: 10px 50px;
+  padding: 5px 15px;
   margin: 6px 12px 16px 20px;
   border-radius: 4px;
-  font-size: 16px;
+  font-size: 14px;
   cursor: pointer;
 }
 
@@ -235,7 +239,8 @@ body {
 .input-group {
   margin-top: auto;
   display: flex;
-  flex-grow: 1;
+  width: 100%;
+
 }
 
 .input-wrapper {
@@ -256,7 +261,7 @@ body {
   right: 20px;
   transform: translateY(-50%);
   cursor: pointer;
-  color:#898989;
+  color: #898989;
 }
 
 li {

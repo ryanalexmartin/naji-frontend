@@ -1,3 +1,6 @@
+<!-- There are some animations and stuff contained in here that
+I'd like to eventually implement, but that's for post MVP -->
+
 <template>
     <div id="app">
       <div class="chat-container">
