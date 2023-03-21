@@ -1,6 +1,10 @@
 <template>
   <div class="home">
-    <h1>Welcome to Omegle Clone</h1>
+    <div class="tagline">
+      <div></div>
+      <h1>Naji</h1>
+      <div>Making strangers into friends</div>
+    </div>
     <button @click="startChat">Start Chat</button>
   </div>
 </template>
@@ -23,7 +27,6 @@ export default {
 </script>
   
 <style scoped>
-
 /* body {
   margin: 0;
   padding: 0;
@@ -35,6 +38,13 @@ export default {
   align-items: center;
   flex-direction: column;
   height: 100vh;
+}
+
+.tagline {
+  display: flex;
+  flex-direction: row;
+align-items: center;
+justify-content: space-between;
 }
 
 button {
@@ -52,8 +62,10 @@ button {
 }
 
 h1 {
-  font-size: 2.5rem;
-  margin-bottom: 30px;
+  font-size: 5rem;
+  margin: 20px;
 }
+
+
 </style>
   

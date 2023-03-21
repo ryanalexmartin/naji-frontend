@@ -1,14 +1,14 @@
 <template>
   <div class="container">
-    <div class="omegle-chat">
-      <h1>Omegle Chat</h1>
+    <div class="Naji-chat">
+      <h1>Naji</h1>
       <div v-if="!connected && !searchButtonVisible && waitingMessageVisible" class="waiting-message">
         Searching for a user to connect you with...
       </div>
       <div v-if="showChatWindow" class="chat-window">
         <ul>
           <li v-for="(message, index) in messages" :key="index" :set="message = JSON.parse(message)">
-            <div v-if="message.sender === 'system'">
+            <div v-if="message.sender === 'system'" class="system-message">
               {{ message.message }}
             </div>
             <div v-if="message.sender === 'Stranger'" class="message-container">
@@ -35,7 +35,8 @@
         </div>
 
       </div>
-      <button v-if="searchButtonVisible" @click="searchForAnotherChat">Search for another chat</button>
+      <button v-if="searchButtonVisible" @click="searchForAnotherChat" class="search-button">Search for another
+        chat</button>
     </div>
   </div>
 </template>
@@ -44,7 +45,7 @@
 import { ref, onMounted, onUnmounted } from "vue";
 
 export default {
-  name: "OmegleChat",
+  name: "NajiChat",
 
   setup() {
     const messages = ref([]);
@@ -68,25 +69,32 @@ export default {
     });
 
     function initializeWebSocket() {
-      websocket.value = new WebSocket("ws://localhost:8080/ws");
-      websocket.value.onmessage = (event) => {
-        const messageData = JSON.parse(event.data);
+  websocket.value = new WebSocket("ws://localhost:8080/ws");
+  websocket.value.onmessage = (event) => {
+    const messageData = JSON.parse(event.data);
 
-        if (messageData.type === "status") {
-          messages.value.push(JSON.stringify({ "sender": "system", "message": messageData.text }));
-          if (messageData.text === "You are now connected with another user.") {
-            connected.value = true;
-            showChatWindow.value = true;
-            searchButtonVisible.value = false;
-          } else if (messageData.text === "The other user has disconnected.") {
-            connected.value = false;
-            searchButtonVisible.value = true;
-          } 
-        } else if (connected.value) {
-          messages.value.push(JSON.stringify({ "sender": "Stranger", "message": messageData.text }));
-        }
-      };
+    if (messageData.type === "status") {
+      // Handle the status message
+      if (messageData.text.includes("Now connected! Let's talk about")) {
+        connected.value = true;
+        showChatWindow.value = true;
+        searchButtonVisible.value = false;
+      } else if (messageData.text === "The other user has disconnected.") {
+        connected.value = false;
+        searchButtonVisible.value = true;
+      } else if (messageData.text === "You have ended the chat.") {
+        searchButtonVisible.value = true;
+        console.log("DISCONNECTING")
+        websocket.value.close();
+        connected.value = false;
+      }
+      messages.value.push(JSON.stringify({ "sender": "system", "message": messageData.text }));
+    } else if (connected.value) {
+      messages.value.push(JSON.stringify({ "sender": "Stranger", "message": messageData.text }));
     }
+  };
+}
+
 
     function endChat() {
       if (endChatText.value === "End Chat") {
@@ -99,8 +107,7 @@ export default {
 
         websocket.value.send(JSON.stringify({ type: "disconnect" }));
         searchButtonVisible.value = true;
-
-      } 
+      }
     }
 
 
@@ -123,6 +130,7 @@ export default {
       searchButtonVisible.value = false;
       showChatWindow.value = false;
       waitingMessageVisible.value = true;
+      endChatText.value = "End Chat";
       initializeWebSocket();
     }
 
@@ -142,7 +150,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 body {
   /* margin: 0; */
   padding: 0;
@@ -182,7 +190,7 @@ body {
 }
 
 .client-message {
-  background-image: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+  background-image: linear-gradient(135deg, #536a8f 0%, #0a5a7f 100%);
   align-self: flex-start;
   background-color: #4f4f4f;
   margin: 10px 20% 10px 10%;
@@ -196,7 +204,7 @@ body {
 }
 
 .server-message {
-  background-image: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  background-image: linear-gradient(135deg, #4facfe 0%, #09c1cb 100%);
   align-self: flex-end;
   background-color: #2196f3;
   color: #fff;
@@ -218,9 +226,9 @@ body {
 }
 
 .system-message {
-  background-color: #eee;
+  background-color: #026b9f41;
   padding: 10px;
-  border-radius: 5px;
+  /* border-radius: 5px; */
 }
 
 .container {
@@ -230,11 +238,11 @@ body {
   justify-content: space-between;
 }
 
-/* .omegle-chat {
+/* .Naji-chat {
   margin-top: auto;
 } */
 
-.omegle-chat {
+.Naji-chat {
   margin: 0;
   display: flex;
   flex-direction: column;
@@ -268,6 +276,28 @@ body {
   cursor: pointer;
   color: #898989;
 }
+
+.search-button {
+    background-color: #077da8; 
+    border: none;
+    border-radius: 3px;
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color 0.3s;
+    margin: 30px;
+  }
+
+  .search-button:hover {
+    background-color: #016f97; /* Slightly darker color for hover effect */
+  }
+
+  h1 {
+    margin-bottom: 5px;
+  }
 
 li {
   /* styles all li elements*/

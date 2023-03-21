@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <OmegleHome v-if="!state.showChat" @start-chat="state.showChat = true" />
-    <OmegleChat v-if="state.showChat" />
+    <NajiHome v-if="!state.showChat" @start-chat="state.showChat = true" />
+    <NajiChat v-if="state.showChat" />
     <div class="wave"></div>
      <div class="wave"></div>
      <div class="wave"></div>
@@ -10,13 +10,13 @@
 
 <script>
 import { reactive } from "vue";
-import OmegleHome from "./components/OmegleHome.vue";
-import OmegleChat from "./components/OmegleChat.vue";
+import NajiHome from "./components/NajiHome.vue";
+import NajiChat from "./components/NajiChat.vue";
 
 export default {
   components: {
-    OmegleHome,
-    OmegleChat,
+    NajiHome,
+    NajiChat,
   },
 
   setup() {

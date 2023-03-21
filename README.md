@@ -1,4 +1,4 @@
-# frontend
+# Naji - Making strangers into friends
 
 ## Project setup
 ```
