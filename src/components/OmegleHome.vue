@@ -23,6 +23,12 @@ export default {
 </script>
   
 <style scoped>
+
+/* body {
+  margin: 0;
+  padding: 0;
+} */
+
 .home {
   display: flex;
   justify-content: center;
