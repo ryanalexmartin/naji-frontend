@@ -3,6 +3,9 @@
 ## Set the NODE_ENV when building:
 NODE_ENV=production npm run build
 
+Make sure to set the IP address in config.json
+If using EC2, use _private_ ip address
+
 
 ## Project setup
 ```

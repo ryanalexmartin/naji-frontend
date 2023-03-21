@@ -45,7 +45,7 @@ If the backend server isn't found, then alert the user on the frontend -->
 </template>
 
 <script>
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, nextTick } from "vue";
 import { backendURL } from "../../config";
 
 export default {
@@ -73,7 +73,7 @@ export default {
     });
 
     function initializeWebSocket() {
-      websocket.value = new WebSocket(`${backendURL}/ws`);
+      websocket.value = new WebSocket(`ws:${backendURL}/ws`);
       websocket.value.onmessage = (event) => {
         const messageData = JSON.parse(event.data);
 
@@ -95,6 +95,7 @@ export default {
           messages.value.push(JSON.stringify({ "sender": "system", "message": messageData.text }));
         } else if (connected.value) {
           messages.value.push(JSON.stringify({ "sender": "Stranger", "message": messageData.text }));
+          scrollToBottom(); // Add this line
         }
       };
     }
@@ -114,7 +115,12 @@ export default {
       }
     }
 
-
+  function scrollToBottom() {
+    nextTick(() => {
+      const chatWindow = document.querySelector(".chat-window");
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    });
+  }
 
     function sendMessage() {
       if (inputMessage.value.trim() !== "") {
@@ -126,6 +132,7 @@ export default {
         websocket.value.send(JSON.stringify(messageData));
         inputMessage.value = "";
         messages.value.push(JSON.stringify({ "sender": "You", "message": messageData.text }));
+        scrollToBottom(); // Add this line
       }
     }
 
@@ -146,6 +153,7 @@ export default {
       searchButtonVisible,
       searchForAnotherChat,
       showChatWindow,
+      scrollToBottom,
       endChat,
       endChatText,
       waitingMessageVisible,
