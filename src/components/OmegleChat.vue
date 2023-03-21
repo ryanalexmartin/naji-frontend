@@ -2,7 +2,7 @@
   <div class="container">
     <div class="omegle-chat">
       <h1>Omegle Chat</h1>
-      <div v-if="!connected && !searchButtonVisible" class="waiting-message">
+      <div v-if="!connected && !searchButtonVisible && waitingMessageVisible" class="waiting-message">
         Searching for a user to connect you with...
       </div>
       <div v-if="showChatWindow" class="chat-window">
@@ -54,6 +54,7 @@ export default {
     const showChatWindow = ref(false);
     const searchButtonVisible = ref(false);
     const endChatText = ref("End Chat");
+    const waitingMessageVisible = ref(true);
 
     onMounted(() => {
       initializeWebSocket();
@@ -80,7 +81,7 @@ export default {
           } else if (messageData.text === "The other user has disconnected.") {
             connected.value = false;
             searchButtonVisible.value = true;
-          }
+          } 
         } else if (connected.value) {
           messages.value.push(JSON.stringify({ "sender": "Stranger", "message": messageData.text }));
         }
@@ -88,19 +89,21 @@ export default {
     }
 
     function endChat() {
-  if (endChatText.value === "End Chat") {
-    endChatText.value = "Are you sure you want to end this chat?";
-  } else if (endChatText.value === "Are you sure you want to end this chat?") {
-    // Handle ending the chat
-    messages.value.push(JSON.stringify({ "sender": "system", "message": "You have ended the chat." }));
-    connected.value = false;
-    endChatText.value = "New Chat";
-  } else if (endChatText.value === "New Chat") {
-    // Handle starting a new chat
-    searchForAnotherChat();
-    endChatText.value = "End Chat";
-  }
-}
+      if (endChatText.value === "End Chat") {
+        endChatText.value = "Are you sure you want to end this chat?";
+      } else if (endChatText.value === "Are you sure you want to end this chat?") {
+        // Handle ending the chat
+        messages.value.push(JSON.stringify({ "sender": "system", "message": "You have ended the chat." }));
+        connected.value = false;
+        waitingMessageVisible.value = false; // Add this line
+
+        websocket.value.send(JSON.stringify({ type: "disconnect" }));
+        searchButtonVisible.value = true;
+
+      } 
+    }
+
+
 
     function sendMessage() {
       if (inputMessage.value.trim() !== "") {
@@ -119,6 +122,7 @@ export default {
       messages.value = [];
       searchButtonVisible.value = false;
       showChatWindow.value = false;
+      waitingMessageVisible.value = true;
       initializeWebSocket();
     }
 
@@ -132,6 +136,7 @@ export default {
       showChatWindow,
       endChat,
       endChatText,
+      waitingMessageVisible,
     };
   },
 };
