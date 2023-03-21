@@ -6,7 +6,12 @@ If the backend server isn't found, then alert the user on the frontend -->
     <div class="Naji-chat">
       <h1>Naji</h1>
       <div v-if="!connected && !searchButtonVisible && waitingMessageVisible" class="waiting-message">
-        Searching for a user to connect you with...
+        <div>
+          Searching for a user to connect you with...
+        </div>
+          <!-- Temporary div to represent ad space -->
+        <ins class="adsbygoogle" :style="adStyle" :data-ad-client="adClient" :data-ad-slot="adSlot"
+          :data-ad-format="adFormat" :data-full-width-responsive="true"></ins>
       </div>
       <div v-if="showChatWindow" class="chat-window">
         <ul>
@@ -50,6 +55,30 @@ import { backendURL } from "../../config";
 
 export default {
   name: "NajiChat",
+
+  data() {
+    return {
+      adClient: "ca-pub-2799052916932576",
+      adSlot: "8407172665",
+      adFormat: "auto",
+      adStyle: "display:block",
+    };
+  },
+  metaInfo() {
+    return {
+      script: [
+        {
+          src: "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",
+          async: true,
+          crossorigin: "anonymous",
+          onload: () => {
+            (window.adsbygoogle = window.adsbygoogle || []).push({});
+          },
+        },
+      ],
+    };
+  },
+
 
   setup() {
     const messages = ref([]);
@@ -115,12 +144,12 @@ export default {
       }
     }
 
-  function scrollToBottom() {
-    nextTick(() => {
-      const chatWindow = document.querySelector(".chat-window");
+    function scrollToBottom() {
+      nextTick(() => {
+        const chatWindow = document.querySelector(".chat-window");
         chatWindow.scrollTop = chatWindow.scrollHeight;
-    });
-  }
+      });
+    }
 
     function sendMessage() {
       if (inputMessage.value.trim() !== "") {

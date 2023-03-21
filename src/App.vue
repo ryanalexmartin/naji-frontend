@@ -1,5 +1,8 @@
 <template>
   <div id="app">
+    <metainfo>
+    <template v-slot:title="{ content }">{{ content ? `${content} | Naji` : `Naji` }}</template>
+  </metainfo>
     <NajiHome v-if="!state.showChat" @start-chat="state.showChat = true" />
     <NajiChat v-if="state.showChat" />
     <div class="wave"></div>
@@ -12,6 +15,7 @@
 import { reactive } from "vue";
 import NajiHome from "./components/NajiHome.vue";
 import NajiChat from "./components/NajiChat.vue";
+import { useMeta } from 'vue-meta'
 
 export default {
   components: {
@@ -20,6 +24,11 @@ export default {
   },
 
   setup() {
+    useMeta({
+      title: '',
+      htmlAttrs: { lang: 'en', amp: true }
+    })
+
     const state = reactive({
       showChat: false,
     });
