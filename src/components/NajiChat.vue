@@ -1,3 +1,6 @@
+<!-- TODO:  We need to always be checking the websocket connection to the backend server.
+If the backend server isn't found, then alert the user on the frontend -->
+
 <template>
   <div class="container">
     <div class="Naji-chat">
