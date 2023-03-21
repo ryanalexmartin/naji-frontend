@@ -53,7 +53,7 @@ If the backend server isn't found, then alert the user on the frontend -->
 import alertSound from '@/assets/alert.mp3';
 import { ref, onMounted, onUnmounted, nextTick } from "vue";
 import { backendURL } from "../../config";
-import { animateSpinningMoon } from "./tabAnimations";
+import { animateSpinningMoon, animateHeartBeat} from "./tabAnimations";
 
 export default {
   name: "NajiChat",
@@ -196,7 +196,7 @@ export default {
     function playAlertSoundAndAnimateTab() {
       if (!document.hasFocus()) {
         playAlertSound();
-        const animations = [animateSpinningMoon];
+        const animations = [animateSpinningMoon, animateHeartBeat];
         const randomAnimation = animations[Math.floor(Math.random() * animations.length)];
         randomAnimation();
       }

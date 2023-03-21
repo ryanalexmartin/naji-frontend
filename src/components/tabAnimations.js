@@ -38,7 +38,23 @@ function animateSpinningMoon() {
   }, { once: true });
 }
 
+function animateHeartBeat() {
+      const heartBeats = ["💓", "💗", "💖"];
+  let currentBeat = 0;
+  const originalTitle = document.title;
+
+  tabAnimationInterval = setInterval(() => {
+    document.title = heartBeats[currentBeat] + " New Message!";
+    currentBeat = (currentBeat + 1) % heartBeats.length;
+  }, 100);
+
+  window.addEventListener("focus", () => {
+    clearInterval(tabAnimationInterval);
+    document.title = originalTitle;
+  }, { once: true });
+}
+
   
-export { animateSpinningMoon };
+export { animateSpinningMoon, animateHeartBeat };
 //   export { animatePong, animateSpinningMoon };
   
