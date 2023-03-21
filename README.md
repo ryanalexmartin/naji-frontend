@@ -1,5 +1,9 @@
 # Naji - Making strangers into friends
 
+## Set the NODE_ENV when building:
+NODE_ENV=production npm run build
+
+
 ## Project setup
 ```
 npm install

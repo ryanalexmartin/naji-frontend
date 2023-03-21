@@ -46,6 +46,7 @@ If the backend server isn't found, then alert the user on the frontend -->
 
 <script>
 import { ref, onMounted, onUnmounted } from "vue";
+import { backendURL } from "../../config";
 
 export default {
   name: "NajiChat",
@@ -72,31 +73,31 @@ export default {
     });
 
     function initializeWebSocket() {
-  websocket.value = new WebSocket("ws://localhost:8080/ws");
-  websocket.value.onmessage = (event) => {
-    const messageData = JSON.parse(event.data);
+      websocket.value = new WebSocket(`${backendURL}/ws`);
+      websocket.value.onmessage = (event) => {
+        const messageData = JSON.parse(event.data);
 
-    if (messageData.type === "status") {
-      // Handle the status message
-      if (messageData.text.includes("Now connected! Let's talk about")) {
-        connected.value = true;
-        showChatWindow.value = true;
-        searchButtonVisible.value = false;
-      } else if (messageData.text === "The other user has disconnected.") {
-        connected.value = false;
-        searchButtonVisible.value = true;
-      } else if (messageData.text === "You have ended the chat.") {
-        searchButtonVisible.value = true;
-        console.log("DISCONNECTING")
-        websocket.value.close();
-        connected.value = false;
-      }
-      messages.value.push(JSON.stringify({ "sender": "system", "message": messageData.text }));
-    } else if (connected.value) {
-      messages.value.push(JSON.stringify({ "sender": "Stranger", "message": messageData.text }));
+        if (messageData.type === "status") {
+          // Handle the status message
+          if (messageData.text.includes("Now connected! Let's talk about")) {
+            connected.value = true;
+            showChatWindow.value = true;
+            searchButtonVisible.value = false;
+          } else if (messageData.text === "The other user has disconnected.") {
+            connected.value = false;
+            searchButtonVisible.value = true;
+          } else if (messageData.text === "You have ended the chat.") {
+            searchButtonVisible.value = true;
+            console.log("DISCONNECTING")
+            websocket.value.close();
+            connected.value = false;
+          }
+          messages.value.push(JSON.stringify({ "sender": "system", "message": messageData.text }));
+        } else if (connected.value) {
+          messages.value.push(JSON.stringify({ "sender": "Stranger", "message": messageData.text }));
+        }
+      };
     }
-  };
-}
 
 
     function endChat() {
@@ -281,26 +282,27 @@ body {
 }
 
 .search-button {
-    background-color: #077da8; 
-    border: none;
-    border-radius: 3px;
-    color: #ffffff;
-    cursor: pointer;
-    font-size: 16px;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    transition: background-color 0.3s;
-    margin: 30px;
-  }
+  background-color: #077da8;
+  border: none;
+  border-radius: 3px;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color 0.3s;
+  margin: 30px;
+}
 
-  .search-button:hover {
-    background-color: #016f97; /* Slightly darker color for hover effect */
-  }
+.search-button:hover {
+  background-color: #016f97;
+  /* Slightly darker color for hover effect */
+}
 
-  h1 {
-    margin-bottom: 5px;
-  }
+h1 {
+  margin-bottom: 5px;
+}
 
 li {
   /* styles all li elements*/
