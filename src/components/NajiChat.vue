@@ -9,7 +9,7 @@ If the backend server isn't found, then alert the user on the frontend -->
         <div>
           Searching for a user to connect you with...
         </div>
-          <!-- Temporary div to represent ad space -->
+        <!-- Temporary div to represent ad space -->
         <ins class="adsbygoogle" :style="adStyle" :data-ad-client="adClient" :data-ad-slot="adSlot"
           :data-ad-format="adFormat" :data-full-width-responsive="true"></ins>
       </div>
@@ -50,8 +50,10 @@ If the backend server isn't found, then alert the user on the frontend -->
 </template>
 
 <script>
+import alertSound from '@/assets/alert.mp3';
 import { ref, onMounted, onUnmounted, nextTick } from "vue";
 import { backendURL } from "../../config";
+import { animateSpinningMoon } from "./tabAnimations";
 
 export default {
   name: "NajiChat",
@@ -79,7 +81,6 @@ export default {
     };
   },
 
-
   setup() {
     const messages = ref([]);
     const inputMessage = ref("");
@@ -89,9 +90,12 @@ export default {
     const searchButtonVisible = ref(false);
     const endChatText = ref("End Chat");
     const waitingMessageVisible = ref(true);
+    const windowIsActive = ref(true);
 
     onMounted(() => {
       initializeWebSocket();
+      window.addEventListener("focus", handleWindowFocus);
+      window.addEventListener("blur", handleWindowBlur);
     });
 
     onUnmounted(() => {
@@ -99,6 +103,8 @@ export default {
         websocket.value.send(JSON.stringify({ type: "disconnect" }));
         websocket.value.close();
       }
+      window.removeEventListener("focus", handleWindowFocus);
+      window.removeEventListener("blur", handleWindowBlur);
     });
 
     function initializeWebSocket() {
@@ -124,11 +130,23 @@ export default {
           messages.value.push(JSON.stringify({ "sender": "system", "message": messageData.text }));
         } else if (connected.value) {
           messages.value.push(JSON.stringify({ "sender": "Stranger", "message": messageData.text }));
+          // Inside the websocket.onmessage event handler, add the following code right after the message is added to messages.value
+          if (!windowIsActive.value) {
+            playAlertSoundAndAnimateTab();
+          }
           scrollToBottom(); // Add this line
         }
       };
     }
 
+    function handleWindowFocus() {
+      windowIsActive.value = true;
+      document.title = "Naji";
+    }
+
+    function handleWindowBlur() {
+      windowIsActive.value = false;
+    }
 
     function endChat() {
       if (endChatText.value === "End Chat") {
@@ -174,6 +192,20 @@ export default {
       initializeWebSocket();
     }
 
+    // Add these two functions to play a sound and animate the tab's metadata
+    function playAlertSoundAndAnimateTab() {
+      if (!document.hasFocus()) {
+        playAlertSound();
+        const animations = [animateSpinningMoon];
+        const randomAnimation = animations[Math.floor(Math.random() * animations.length)];
+        randomAnimation();
+      }
+    }
+
+    function playAlertSound() {
+      const audio = new Audio(alertSound);
+      audio.play();
+    }
     return {
       messages,
       inputMessage,
@@ -258,8 +290,6 @@ body {
   word-wrap: break-word;
 }
 
-
-
 .horizontal-flexbox {
   display: flex;
   flex-direction: row;
@@ -279,10 +309,6 @@ body {
   justify-content: space-between;
 }
 
-/* .Naji-chat {
-  margin-top: auto;
-} */
-
 .Naji-chat {
   margin: 0;
   display: flex;
@@ -294,7 +320,6 @@ body {
   margin-top: auto;
   display: flex;
   width: 100%;
-
 }
 
 .input-wrapper {
