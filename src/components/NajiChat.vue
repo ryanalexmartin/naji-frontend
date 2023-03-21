@@ -46,11 +46,7 @@ If the backend server isn't found, then alert the user on the frontend -->
 
 <script>
 import { ref, onMounted, onUnmounted } from "vue";
-<<<<<<< HEAD
 import { backendURL } from "../../config";
-=======
-import { backendURL } from "./config";
->>>>>>> 9d0821936700ae71299ac63ddf33d354ba12000f
 
 export default {
   name: "NajiChat",
