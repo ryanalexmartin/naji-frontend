@@ -108,7 +108,8 @@ export default {
     });
 
     function initializeWebSocket() {
-      websocket.value = new WebSocket(`ws:${backendURL}/ws`);
+      console.log("Establishing secure websocket connection...")
+      websocket.value = new WebSocket(`${backendURL}/ws`);
       websocket.value.onmessage = (event) => {
         const messageData = JSON.parse(event.data);
 

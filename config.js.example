@@ -1,3 +1,9 @@
-const backendURL = process.env.NODE_ENV === "production" ? "yourtld.com:8080" : "localhost:8080";
+let backendURL;
+
+if (process.env.NODE_ENV === "production") {
+  backendURL = "wss://your_aws_stuff.aws.com:443";
+} else {
+  backendURL = "ws://localhost:8080"; // Replace with your local backend server's address and port if necessary
+}
 
 export { backendURL };
