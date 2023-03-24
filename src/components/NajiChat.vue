@@ -36,10 +36,8 @@ If the backend server isn't found, then alert the user on the frontend -->
       <div v-if="connected" class="input-group">
         <div class="input-group">
           <button class="end-chat-button" @click="endChat">{{ endChatText }}</button>
-          <div class="input-wrapper">
-            <input type="text" v-model="inputMessage" @keyup.enter="sendMessage" placeholder="Type a message..." />
-            <i class="fas fa-paper-plane" @click="sendMessage"></i>
-          </div>
+          <InputBox :input-message="inputMessage" @update:inputMessage="inputMessage = $event"
+            @send-message="sendMessage($event)" />
         </div>
       </div>
       <SearchButton :search-button-visible="searchButtonVisible" @search-for-another-chat="searchForAnotherChat" />
@@ -52,6 +50,7 @@ import alertSound from '@/assets/alert.mp3';
 import { ref, onMounted, onUnmounted, nextTick } from "vue";
 import { backendURL } from "../../config";
 import { animateSpinningMoon, animateHeartBeat } from "./tabAnimations";
+import InputBox from './InputBox.vue';
 
 import SearchButton from "@/components/SearchButton.vue";
 
@@ -61,30 +60,11 @@ export default {
 
   components: {
     SearchButton,
+    InputBox
   },
 
-  data() {
-    return {
-      adClient: "ca-pub-2799052916932576",
-      adSlot: "8407172665",
-      adFormat: "auto",
-      adStyle: "display:block",
-    };
-  },
-  metaInfo() {
-    return {
-      script: [
-        {
-          src: "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",
-          async: true,
-          crossorigin: "anonymous",
-          onload: () => {
-            (window.adsbygoogle = window.adsbygoogle || []).push({});
-          },
-        },
-      ],
-    };
-  },
+
+
 
   setup() {
     const messages = ref([]);
@@ -323,33 +303,10 @@ body {
 }
 
 .input-group {
-  margin-top: auto;
-  display: flex;
-  width: 100%;
+    margin-top: auto;
+    display: flex;
+    width: 100%;
 }
-
-.input-wrapper {
-  position: relative;
-  display: inline-block;
-  width: 90%;
-  margin-bottom: 10px;
-  margin-right: 20px;
-}
-
-.input-group input[type="text"] {
-  padding-right: 40px;
-}
-
-.fas.fa-paper-plane {
-  position: absolute;
-  top: 50%;
-  right: 20px;
-  transform: translateY(-50%);
-  cursor: pointer;
-  color: #898989;
-}
-
-
 
 h1 {
   margin-bottom: 5px;
@@ -362,16 +319,5 @@ li {
 
 ul {
   padding: 0;
-}
-
-input[type="text"] {
-  width: 100%;
-  padding: 12px 10px;
-  margin: 8px 0;
-  box-sizing: border-box;
-  border: 2px solid #ccc;
-  border-radius: 4px;
-  background-color: #f8f8f8;
-  font-size: 16px;
 }
 </style>
