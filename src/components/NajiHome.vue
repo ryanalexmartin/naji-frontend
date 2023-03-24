@@ -5,14 +5,55 @@
       <h1>Naji</h1>
       <div>Making strangers into friends</div>
     </div>
-    <button @click="startChat">Start Chat</button>
+    <button @click="startChat">Start Chatting</button>
+    <div class="online-user-count">Real People chatting now (text): {{ onlineUsers }}</div>
+    <div class="bottom-align-div">
+      <DiscordInviteButton inviteCode="https://discord.gg/GncrRGG3mX" />
+    </div>
+
+    <div>Right now Naji is just a simple chat app, but keep checking in daily, and see what it becomes...</div>
+    
   </div>
 </template>
 
 <script>
+import { backendURL } from "../../config";
+import DiscordInviteButton from "./DiscordInviteButton.vue";
 
 export default {
+
+  data() {
+    return {
+      onlineUsers: 0,
+    };
+  },
+
+  created() {
+    this.fetchOnlineUsers();
+    setInterval(() => {
+      this.fetchOnlineUsers();
+    }, 10000); // Update every 10 seconds
+  },
+
   emits: ["start-chat"],
+
+  components: {
+    DiscordInviteButton,
+  },
+
+  methods: {
+    async fetchOnlineUsers() {
+      let backendURLProtocol = backendURL.replace("wss://", "https://");
+      backendURLProtocol = backendURLProtocol.replace("ws://", "http://");
+      try {
+        const response = await fetch(backendURLProtocol + "/online-users");
+        const data = await response.json();
+        this.onlineUsers = data.onlineUsers;
+      } catch (error) {
+        console.error('Failed to fetch online users:', error);
+      }
+    },
+  },
 
   setup(_, { emit }) {
     function startChat() {
@@ -27,7 +68,6 @@ export default {
 </script>
   
 <style scoped>
-
 .home {
   display: flex;
   justify-content: center;
@@ -39,8 +79,19 @@ export default {
 .tagline {
   display: flex;
   flex-direction: row;
-align-items: center;
-justify-content: space-between;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.bottom-align-div {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+ }
+
+.online-user-count {
+  margin-top: 10px;
+  color: #7a7a7aa6;
 }
 
 button {
@@ -61,7 +112,5 @@ h1 {
   font-size: 5rem;
   margin: 20px;
 }
-
-
 </style>
   
