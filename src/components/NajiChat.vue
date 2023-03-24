@@ -41,10 +41,8 @@ If the backend server isn't found, then alert the user on the frontend -->
             <i class="fas fa-paper-plane" @click="sendMessage"></i>
           </div>
         </div>
-
       </div>
-      <button v-if="searchButtonVisible" @click="searchForAnotherChat" class="search-button">Search for another
-        chat</button>
+      <SearchButton :search-button-visible="searchButtonVisible" @search-for-another-chat="searchForAnotherChat" />
     </div>
   </div>
 </template>
@@ -53,10 +51,17 @@ If the backend server isn't found, then alert the user on the frontend -->
 import alertSound from '@/assets/alert.mp3';
 import { ref, onMounted, onUnmounted, nextTick } from "vue";
 import { backendURL } from "../../config";
-import { animateSpinningMoon, animateHeartBeat} from "./tabAnimations";
+import { animateSpinningMoon, animateHeartBeat } from "./tabAnimations";
+
+import SearchButton from "@/components/SearchButton.vue";
+
 
 export default {
   name: "NajiChat",
+
+  components: {
+    SearchButton,
+  },
 
   data() {
     return {
@@ -344,24 +349,7 @@ body {
   color: #898989;
 }
 
-.search-button {
-  background-color: #077da8;
-  border: none;
-  border-radius: 3px;
-  color: #ffffff;
-  cursor: pointer;
-  font-size: 16px;
-  padding: 10px 20px;
-  text-align: center;
-  text-decoration: none;
-  transition: background-color 0.3s;
-  margin: 30px;
-}
 
-.search-button:hover {
-  background-color: #016f97;
-  /* Slightly darker color for hover effect */
-}
 
 h1 {
   margin-bottom: 5px;
