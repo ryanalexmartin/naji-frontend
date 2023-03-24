@@ -1,17 +1,17 @@
 <template>
   <div class="home">
+    <div>Right now, it's just a simple chat app, but keep checking in daily, and see what it becomes...</div>
     <div class="tagline">
       <div></div>
       <h1>Naji</h1>
       <div>Making strangers into friends</div>
     </div>
     <button @click="startChat">Start Chatting</button>
-    <div class="online-user-count">Real People chatting now (text): {{ onlineUsers }}</div>
+    <div class="online-user-count">People chatting now: {{ onlineUsers }}</div>
     <div class="bottom-align-div">
       <DiscordInviteButton inviteCode="https://discord.gg/GncrRGG3mX" />
     </div>
 
-    <div>Right now Naji is just a simple chat app, but keep checking in daily, and see what it becomes...</div>
     
   </div>
 </template>
@@ -73,7 +73,7 @@ export default {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  height: 100vh;
+  height: 80vh;
 }
 
 .tagline {
