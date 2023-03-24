@@ -63,9 +63,6 @@ export default {
     InputBox
   },
 
-
-
-
   setup() {
     const messages = ref([]);
     const inputMessage = ref("");
@@ -81,6 +78,9 @@ export default {
       initializeWebSocket();
       window.addEventListener("focus", handleWindowFocus);
       window.addEventListener("blur", handleWindowBlur);
+
+      // Check websocket connection every 10 seconds
+      setInterval(checkWebSocketConnection, 10000);
     });
 
     onUnmounted(() => {
@@ -148,6 +148,15 @@ export default {
       }
     }
 
+    function checkWebSocketConnection() {
+      if (websocket.value && websocket.value.readyState === WebSocket.OPEN) {
+        connected.value = true;
+      } else {
+        connected.value = false;
+        window.alert("Unable to connect to server. Please check your internet connection and try again.");
+      }
+    }
+
     function scrollToBottom() {
       nextTick(() => {
         const chatWindow = document.querySelector(".chat-window");
@@ -204,6 +213,7 @@ export default {
       endChat,
       endChatText,
       waitingMessageVisible,
+      checkWebSocketConnection,
     };
   },
 };
@@ -303,9 +313,9 @@ body {
 }
 
 .input-group {
-    margin-top: auto;
-    display: flex;
-    width: 100%;
+  margin-top: auto;
+  display: flex;
+  width: 100%;
 }
 
 h1 {
